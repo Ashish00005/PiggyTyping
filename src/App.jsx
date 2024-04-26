@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import paragraphs from './paragraphs';
+import image from './components/image.png'
 
 function App() {
   const [randomParagraph, setRandomParagraph] = useState('');
-  // const [mistakes, setMistakes] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [seconds, setSeconds] = useState(60);
+  const [mistakes,setMistakes] = useState(0);
 
   useEffect(() => {
     getRandomParagraph();
@@ -16,6 +19,10 @@ function App() {
       const inputField = document.querySelector('input');
       if (inputField) {
         inputField.focus();
+      }
+      
+      if (event.ctrlKey && event.key === 'Backspace') {
+        event.preventDefault();
       }
 
       // Check if the Tab key is pressed
@@ -43,25 +50,25 @@ function App() {
     let typedChar = document.querySelector('input').value.split('')[charIndex];
 
     if (typedChar == null) {
-      charIndex--;
-      // if(characters[charIndex].classList.contains('incorrect')){
-      //   setMistakes((mistakes) => mistakes - 1);
-      // }
-      characters[charIndex].classList.remove('correct', 'incorrect');
+      setCharIndex((charIndex) => charIndex - 1);
+      if(characters[charIndex-1].classList.contains('incorrect')){
+        setMistakes((mistakes)=> mistakes-1);
+      }
+     // console.log(charIndex);
+      characters[charIndex-1].classList.remove('correct', 'incorrect');
     } else {
       if (characters[charIndex].innerText === typedChar) {
-        console.log('correct');
+       // console.log('correct');
         characters[charIndex].classList.add('correct');
       } else {
-        console.log('incorrect');
-        // setMistakes((mistakes) => mistakes + 1);
+        //console.log('incorrect');
+        setMistakes((mistakes)=>mistakes+1)
         characters[charIndex].classList.add('incorrect');
       }
-      charIndex++;
+      setCharIndex((charIndex) => charIndex + 1);
+      console.log(charIndex);
     }
   }
-
-  let charIndex = 0;
 
   function getRandomParagraph() {
     const randIndex = Math.floor(Math.random() * paragraphs.length);
@@ -80,19 +87,44 @@ function App() {
   }
 
   function resetInput(){
-      const inputField = document.querySelector('input');
-      if (inputField) {
-        inputField.value = '';
-      }
+    const inputField = document.querySelector('input');
+    if (inputField) {
+      inputField.value = '';
+    }
+  }
+
+  const [timerRunning, setTimerRunning] = useState(false);
+
+  function handleInputChange() {
+    if (!timerRunning) {
+      startTimer();
+      setTimerRunning(true);
+    }
+  }
+  const [intervalId, setIntervalId] = useState(null);
+
+  function startTimer(){
+    const id = setInterval(() => {
+      setSeconds((prevSeconds) => {
+        if (prevSeconds === 0) {
+          clearInterval(id); // Stop the timer when it reaches 0
+          return prevSeconds;
+        }
+        return prevSeconds - 1;
+      });
+    },1000)
+    setIntervalId(id);
   }
 
   return (
     <>
-      <div className='w-screen h-screen bg-cyan-600 flex justify-center items-center'>
+      <div className='w-screen h-screen bg-cyan-600 flex relative justify-center items-center '>
+      <img className='absolute size-44 top-0 left-12 cursor-pointer'src={image} alt="Logo" onClick={() => {window.location.reload();}} />
         <div className='w-full sm:w-[80%] md:w-[60%] lg:w-[50%] h-fit bg-sky-100 rounded-2xl p-8'>
-          <input
+          <input 
             onChange={() => {
               validation();
+              handleInputChange();
             }}
             type='text'
             className='myInputField'
@@ -105,12 +137,12 @@ function App() {
               <div className='flex-1 border-r-2 p-2 border-sky-500'>
                 <p className='min-w-[5rem]'>Time Left:</p>
                 <span>
-                  <b>60</b>s
+                  <b className='pr-1'>{seconds}</b>s
                 </span>
               </div>
               <div className='flex-1 border-r-2 p-2 border-sky-500'>
                 <p>Mistakes:</p>
-                {/* <span>{mistakes}</span> */}
+                <span>{mistakes}</span>
               </div>
               <div className='flex-1 border-r-2 p-2 border-sky-500'>
                 <p>WPM</p>
@@ -127,6 +159,11 @@ function App() {
                     getRandomParagraph();
                     clearClasses();
                     resetInput();
+                    setCharIndex(0)
+                    setMistakes(0);
+                    setTimerRunning(false)
+                    setSeconds(60)
+                    clearInterval(intervalId)
                   }} 
                 >
                   Try Again
