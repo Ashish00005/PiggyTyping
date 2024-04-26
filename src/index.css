@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+.correct{
+  color: rgb(15, 80, 15);
+  background-color: rgb(149, 218, 144);
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+.incorrect{
+  color: rgb(209, 61, 61);
+  background-color: rgb(233, 197, 197);
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+
