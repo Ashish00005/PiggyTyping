@@ -4,10 +4,14 @@ import paragraphs from './paragraphs';
 import image from './components/image.png'
 
 function App() {
-  const [randomParagraph, setRandomParagraph] = useState('');
+  
+  let maxTime = 60;
+  const [randomParagraph, setRandomParagraph] = useState('hiiii');
   const [charIndex, setCharIndex] = useState(0);
-  const [seconds, setSeconds] = useState(60);
+  const [seconds, setSeconds] = useState(maxTime);
   const [mistakes,setMistakes] = useState(0);
+  const [cpm,setCpm] = useState(0)
+  const [wpm,setWpm] = useState(0)
 
   useEffect(() => {
     getRandomParagraph();
@@ -49,6 +53,28 @@ function App() {
     const characters = document.querySelectorAll('span');
     let typedChar = document.querySelector('input').value.split('')[charIndex];
 
+    if(seconds <= 0 || charIndex-1 > (characters.length-6)){
+      if(seconds<=0){
+        document.querySelector('input').disabled = true;
+       return
+      }
+      if(characters[charIndex].classList.contains('incorrect')){
+        document.addEventListener('keydown', function(event) {
+          if (event.key === 'Backspace') {
+            setCharIndex((charIndex) => charIndex - 1);
+            setMistakes((mistakes)=> mistakes-1);
+            characters[charIndex-1].classList.remove('correct', 'incorrect');
+          } else {
+              event.preventDefault(); // Prevent the default behavior for other keys
+          }
+      });
+      }
+      else{
+      document.querySelector('input').disabled = true;
+      return
+      }
+  }
+  else{
     if (typedChar == null) {
       setCharIndex((charIndex) => charIndex - 1);
       if(characters[charIndex-1].classList.contains('incorrect')){
@@ -66,9 +92,16 @@ function App() {
         characters[charIndex].classList.add('incorrect');
       }
       setCharIndex((charIndex) => charIndex + 1);
-      console.log(charIndex);
+      // console.log(charIndex);
     }
+
+      let speed = Math.round(((charIndex - mistakes) / 5 / (maxTime - seconds)) * 60)
+      speed = speed < 0 || !speed || speed === Infinity ? 0 : speed;
+      setWpm(speed)
+      setCpm(charIndex-mistakes)
   }
+}
+
 
   function getRandomParagraph() {
     const randIndex = Math.floor(Math.random() * paragraphs.length);
@@ -91,6 +124,7 @@ function App() {
     if (inputField) {
       inputField.value = '';
     }
+    document.querySelector('input').disabled = false;
   }
 
   const [timerRunning, setTimerRunning] = useState(false);
@@ -127,7 +161,7 @@ function App() {
               handleInputChange();
             }}
             type='text'
-            className='myInputField'
+            className='myInputField -z-50 opacity-0 absolute cursor-default'
           />
           <div className='border-sky-500 border-2 p-8 rounded-2xl'>
             <div className='hide-scrollbar text-lg max-h-48 overflow-y-scroll tracking-wider'>
@@ -146,11 +180,11 @@ function App() {
               </div>
               <div className='flex-1 border-r-2 p-2 border-sky-500'>
                 <p>WPM</p>
-                <span>0</span>
+                <span>{wpm}</span>
               </div>
               <div className='flex-1 p-2'>
                 <p>CPM</p>
-                <span>0</span>
+                <span>{cpm}</span>
               </div>
               <div className='flex justify-center items-center mt-3'>
                 <button
@@ -161,6 +195,8 @@ function App() {
                     resetInput();
                     setCharIndex(0)
                     setMistakes(0);
+                    setCpm(0)
+                    setWpm(0)
                     setTimerRunning(false)
                     setSeconds(60)
                     clearInterval(intervalId)
