@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import paragraphs from './paragraphs';
 import image from './components/image.png'
 
 function App() {
@@ -104,14 +103,20 @@ function App() {
 }
 
 
-  function getRandomParagraph() {
-    const randIndex = Math.floor(Math.random() * paragraphs.length);
-    const paragraph = paragraphs[randIndex];
-    const letters = paragraph.split('').map((letter, index) => (
-      <span key={index}>{letter}</span>
-    ));
-    setRandomParagraph(<p>{letters}</p>);
-  }
+function getRandomParagraph() {
+  fetch('http://localhost:5000/api/paragraphs/random/')
+    .then(response => response.json())
+    .then(data => {
+      const paragraph = data.paragraph;
+      const letters = paragraph.split('').map((letter, index) => (
+        <span key={index}>{letter}</span>
+      ));
+      setRandomParagraph(<p>{letters}</p>);
+    })
+    .catch(error => {
+      console.error('Error fetching random paragraph:', error);
+    });
+}
 
   function clearClasses() {
     const characters = document.querySelectorAll('span');
