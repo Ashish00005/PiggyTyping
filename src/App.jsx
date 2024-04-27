@@ -12,6 +12,7 @@ function App() {
   const [mistakes,setMistakes] = useState(0);
   const [cpm,setCpm] = useState(0)
   const [wpm,setWpm] = useState(0)
+  const [isHovered,setIsHovered] =useState(false)
 
   useEffect(() => {
     getRandomParagraph();
@@ -186,25 +187,27 @@ function App() {
                 <p>CPM</p>
                 <span>{cpm}</span>
               </div>
-              <div className='flex justify-center items-center mt-3'>
-                <button
-                  className='try-again-button bg-cyan-600 text-white rounded-full px-5 py-1 mt-4 sm:mt-0 transform transition-all hover:scale-110'
-                  onClick={()=>{
-                    getRandomParagraph();
-                    clearClasses();
-                    resetInput();
-                    setCharIndex(0)
-                    setMistakes(0);
-                    setCpm(0)
-                    setWpm(0)
-                    setTimerRunning(false)
-                    setSeconds(60)
-                    clearInterval(intervalId)
-                  }} 
-                >
-                  Try Again
-                </button>
-              </div>
+              <div className='flex justify-center items-center mt-3 relative'>
+                {isHovered && <div className="hover-text absolute -top-7 text-black  rounded-full">'Tab btn'</div>}
+                <button className='try-again-button bg-cyan-600 text-white rounded-full px-5 py-1 mt-4 sm:mt-0 transform transition-all hover:scale-110 hover:'
+                        onClick={()=>{
+                        getRandomParagraph();
+                        clearClasses();
+                        resetInput();
+                        setCharIndex(0)
+                        setMistakes(0);
+                        setCpm(0)
+                        setWpm(0)
+                        setTimerRunning(false)
+                        setSeconds(60)
+                        clearInterval(intervalId)
+                        }}
+                        onMouseEnter={() => setIsHovered(true)} // Set isHovered to true on hover
+                        onMouseLeave={() => setIsHovered(false)} // Set isHovered to false when not hovered
+                  >
+                     Try Again
+                  </button>
+                </div>
             </div>
           </div>
         </div>
