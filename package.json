@@ -1,23 +1,21 @@
 {
+    "homepage": "https://ashish00005.github.io/PiggyTyping",
     "name": "my-project",
     "version": "1.0.0",
     "description": "My full-stack project",
     "dependencies": {
-        "@vitejs/plugin-react": "^4.2.1",
-        "cors": "^2.8.5",
-        "express": "^4.19.2",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "sqlite3": "^5.1.7"
+        "react": "^18.2.0"
     },
     "scripts": {
         "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+        "build": "cd frontend && npm run build",
+        "deploy": "npm run build && gh-pages -d frontend/dist",
         "start:frontend": "cd frontend && npm run dev",
         "start:backend": "node backend/app.js",
         "test": "echo \"Error: no test specified\" && exit 1"
-    },
+      },
     "devDependencies": {
         "concurrently": "^8.2.2",
-        "vite": "^5.2.10"
+        "gh-pages": "^6.1.1"
     }
 }

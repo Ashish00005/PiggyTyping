@@ -3,7 +3,7 @@
   <img alt="Version" src="https://img.shields.io/badge/version-0.0.0-blue.svg?cacheSeconds=2592000" />
 </p>
 
-> You can test your typing speed and showcase your finger's speed
+> You can test your typing speed and showcase your finger's speed.
 
 ### ✨ [Demo](https://piggytyping.netlify.app/)
 
@@ -11,6 +11,8 @@
 
 ```sh
 npm install
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
 ```
 
 ## Run tests
